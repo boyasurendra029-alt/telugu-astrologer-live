@@ -58,6 +58,31 @@ function runsToText(runs = []) {
     .trim();
 }
 
+const FALLBACK_NAME = 'భక్తులు';
+
+// Turns a YouTube display name / @handle into a clean, speakable name.
+//  "@SureshKumar92"   -> "Suresh Kumar"
+//  "ravi_kumar.4821"  -> "ravi kumar"
+//  "@user-ab12cd34"   -> "భక్తులు" (generic fallback)
+function cleanViewerName(raw) {
+  let s = String(raw || '').normalize('NFC').trim();
+  s = s.replace(/^@+/, '');
+  if (/^user[-_]?[a-z0-9]{3,}$/i.test(s)) return FALLBACK_NAME;   // YouTube default handles
+  s = s.replace(/([a-z])([A-Z])/g, '$1 $2');                       // SureshKumar -> Suresh Kumar
+  s = s.replace(/[._\-+]+/g, ' ');                                 // separators -> spaces
+  s = s.replace(/\d+/g, ' ');                                      // drop all digits
+  s = s.replace(/[^\p{L}\p{M}\s]/gu, ' ');                         // drop emoji / symbols
+  s = s.replace(/\s+/g, ' ').trim();
+  const name = s
+    .split(' ')
+    .filter((w) => w.length > 1)                                   // drop stray single letters
+    .slice(0, 3)
+    .join(' ')
+    .slice(0, 30)
+    .trim();
+  return name.length >= 2 ? name : FALLBACK_NAME;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   try {
@@ -97,7 +122,7 @@ export default async function handler(req, res) {
       if (!message) continue;
       messages.push({
         id: String(r.id),
-        author: r.authorName?.simpleText || 'భక్తులు',
+        author: cleanViewerName(r.authorName?.simpleText),
         message,
       });
     }
