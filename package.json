@@ -1,0 +1,13 @@
+{
+  "name": "telugu-ai-astrologer-live",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Automated AI Telugu Astrologer live stream overlay (OBS Browser Source) for Vercel",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@andresaya/edge-tts": "^1.7.0"
+  }
+}
