@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AI Telugu Astrologer – Shorts Live</title>
+<title>AI Telugu Astrologer – Live</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <style>
-  :root { --gold: #ffb74d; --saffron: #ff9800; --cream: #fff3e0; }
+  :root {
+    --gold: #ffb74d;
+    --saffron: #ff9800;
+    --cream: #fff3e0;
+    --subtitle-size: 28px;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     width: 100vw; height: 100vh; overflow: hidden;
@@ -16,184 +21,247 @@
     font-family: 'Noto Sans Telugu', 'Gautami', system-ui, sans-serif;
   }
 
-  /* Fixed 1080x1920 (9:16) canvas, scaled to fit any window (scale = 1 in OBS at 1080x1920).
-     Two parts, one continuous background: astrologer only on top, static Telugu text below. */
+  /* Fixed 1920x1080 design canvas, scaled to fit any window (scale = 1 in OBS at 1920x1080) */
   #stage {
     position: absolute; top: 0; left: 0;
-    width: 1080px; height: 1920px;
+    width: 1920px; height: 1080px;
     transform-origin: top left;
     overflow: hidden;
     background:
-      radial-gradient(ellipse 900px 700px at 50% 66%, rgba(190,80,15,.38) 0%, rgba(190,80,15,0) 70%),
-      linear-gradient(180deg, #1c0b05 0%, #2a0e06 45%, #1d0a05 75%, #120602 100%);
+      radial-gradient(ellipse at 50% 40%, rgba(150,60,10,.45) 0%, rgba(70,20,8,.55) 45%, rgba(18,6,3,1) 100%),
+      linear-gradient(135deg, #2b0d06 0%, #3a1608 50%, #1a0805 100%);
   }
 
-  /* ================= PART 1: ASTROLOGER ONLY (top) ================= */
+  /* ---------- Atmosphere ---------- */
+  #zodiac { position: absolute; left: 960px; top: 560px; width: 0; height: 0; z-index: 0; animation: spin 300s linear infinite; }
+  #zodiac span {
+    position: absolute; left: -40px; top: -40px; width: 80px; height: 80px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; color: var(--gold); opacity: .09;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #frame {
+    position: absolute; inset: 10px; z-index: 1; pointer-events: none;
+    border: 2px solid rgba(255,183,77,.55); border-radius: 22px;
+    box-shadow: inset 0 0 40px rgba(255,152,0,.12);
+  }
+  #frame::before {
+    content: ''; position: absolute; inset: 7px;
+    border: 1px solid rgba(255,183,77,.3); border-radius: 16px;
+  }
+  .corner { position: absolute; z-index: 2; font-size: 30px; color: var(--gold); opacity: .8; pointer-events: none; }
+
+  /* ---------- Header (Y 0–90) ---------- */
+  #header { position: absolute; top: 0; left: 60px; width: 1800px; height: 90px; z-index: 5; display: flex; align-items: center; gap: 20px; }
+  #titleBadge {
+    flex: 0 0 auto; height: 62px; padding: 0 28px;
+    display: flex; align-items: center; gap: 12px; white-space: nowrap;
+    background: linear-gradient(135deg, rgba(70,28,5,.96), rgba(28,11,3,.96));
+    border: 2px solid var(--gold); border-radius: 31px;
+    box-shadow: 0 0 20px rgba(255,152,0,.35);
+    color: var(--gold);
+  }
+  #titleBadge .te { font-size: 28px; font-weight: 800; }
+  #titleBadge .en { font-size: 16px; font-weight: 600; color: #ffcc80; }
+  #marqueeWrap {
+    flex: 1; height: 54px; overflow: hidden; position: relative;
+    background: rgba(18,9,3,.85); border: 2px solid rgba(255,183,77,.7); border-radius: 27px;
+  }
+  #marquee {
+    position: absolute; top: 0; left: 0; height: 100%; white-space: nowrap;
+    display: flex; align-items: center;
+    color: var(--cream); font-size: 24px; font-weight: 600;
+    animation: scrollLeft 28s linear infinite;
+  }
+  #marquee span { padding-right: 100px; }
+  @keyframes scrollLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  #livePill {
+    flex: 0 0 auto; height: 54px; padding: 0 24px;
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(18,9,3,.92); border: 2px solid #ff5252; border-radius: 27px;
+    color: #fff; font-size: 26px; font-weight: 800;
+  }
+  #liveDot { width: 18px; height: 18px; border-radius: 50%; background: #ff1744; animation: pulse 1.1s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,23,68,.8); transform: scale(1); }
+    70% { box-shadow: 0 0 0 14px rgba(255,23,68,0); transform: scale(1.1); }
+    100% { box-shadow: 0 0 0 0 rgba(255,23,68,0); transform: scale(1); }
+  }
+
+  /* ---------- Video stage (X60 Y120 1150x650) ---------- */
   #videoFrame {
-    position: absolute; top: 0; left: 0; width: 1080px; height: 1040px; z-index: 1;
-    overflow: hidden; background: transparent;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
-            mask-image: linear-gradient(to bottom, #000 0%, #000 80%, transparent 100%);
+    position: absolute; left: 60px; top: 120px; width: 1150px; height: 650px; z-index: 5;
+    border: 3px solid var(--saffron); border-radius: 18px;
+    overflow: hidden; background: #000;
+    box-shadow: 0 0 30px rgba(255,152,0,.3);
   }
   #videoFrame video {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; pointer-events: none; will-change: transform;
+    object-fit: cover; pointer-events: none;
   }
   #idleVideo { z-index: 1; opacity: 1; }
   #talkingVideo { z-index: 2; opacity: 0; transition: opacity 0.15s ease-in-out; }
   #talkingVideo.active { opacity: 1; }
 
-  /* ================= OPTIONAL BACKDROP IMAGE (your upload) ================= */
-  #bottomBg {
-    position: absolute; top: 1000px; left: 0; width: 1080px; height: 920px; z-index: 0;
-    overflow: hidden; opacity: .5;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 100%);
+  /* ---------- Sidebar (X1240 Y120 620x650) ---------- */
+  #sidebar { position: absolute; left: 1240px; top: 120px; width: 620px; height: 650px; z-index: 5; display: flex; flex-direction: column; gap: 16px; }
+  .panel {
+    background: rgba(18,9,3,.92); border: 2px solid var(--gold); border-radius: 16px;
+    box-shadow: 0 0 20px rgba(255,152,0,.22); backdrop-filter: blur(6px);
   }
-  #bottomImg { position: absolute; inset: 0; width: 100%; height: 100%; display: none; object-fit: cover; }
-  #bottomBg::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(18,6,2,.35) 0%, rgba(18,6,2,.6) 100%);
+  #spotlight { flex: 0 0 340px; padding: 18px 24px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  #spotlight.pop { animation: popIn .45s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes popIn { from { transform: scale(.94); opacity: .5; } to { transform: scale(1); opacity: 1; } }
+  .label { font-size: 20px; font-weight: 700; color: #ffcc80; letter-spacing: .3px; }
+  #qTop { display: flex; align-items: center; gap: 14px; }
+  #avatar {
+    flex: 0 0 auto; width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 32px;
+    background: radial-gradient(circle at 30% 30%, #ffd180, #e65100);
+    border: 3px solid #ffe0b2;
+  }
+  #viewerName { flex: 1; font-size: 34px; font-weight: 800; color: var(--gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #waves { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; height: 52px; }
+  #waves i { display: block; width: 7px; height: 12px; border-radius: 4px; background: var(--saffron); }
+  #waves.thinking i { animation: bounce 1.2s ease-in-out infinite; opacity: .7; }
+  #waves.speaking i { animation: bounce .55s ease-in-out infinite; }
+  #waves i:nth-child(1) { animation-delay: 0s; }
+  #waves i:nth-child(2) { animation-delay: .1s; }
+  #waves i:nth-child(3) { animation-delay: .2s; }
+  #waves i:nth-child(4) { animation-delay: .3s; }
+  #waves i:nth-child(5) { animation-delay: .15s; }
+  #waves i:nth-child(6) { animation-delay: .05s; }
+  @keyframes bounce { 0%,100% { height: 10px; } 50% { height: 48px; } }
+  #questionText {
+    font-size: 28px; font-weight: 600; color: #fff; line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
   }
 
-  /* ================= PART 2: STATIC TELUGU TEXT (no animation, never changes) ================= */
-  .txt { position: absolute; left: 60px; width: 870px; z-index: 2; text-shadow: 0 2px 12px rgba(0,0,0,.65); }  /* right 150px kept clear for Shorts buttons */
+  #queuePanel { flex: 1; padding: 14px 24px; overflow: hidden; display: flex; flex-direction: column; }
+  #queueHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  #queueCount { font-size: 20px; font-weight: 800; color: #2b1200; background: var(--gold); padding: 0 14px; border-radius: 14px; }
+  #queueList { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  #queueList li {
+    font-size: 22px; color: var(--cream); line-height: 1.4;
+    padding: 6px 12px; border-left: 4px solid var(--saffron);
+    background: rgba(255,152,0,.08); border-radius: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    animation: slideIn .35s ease;
+  }
+  #queueList li b { color: var(--gold); }
+  #queueList li.empty { border-left-color: transparent; background: none; color: #a1783f; }
+  @keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: none; opacity: 1; } }
 
-  #chip {
-    top: 1036px; width: auto; padding: 3px 24px;
-    font-size: 28px; font-weight: 800; color: #fff; background: #d50000; border-radius: 26px; text-shadow: none;
+  /* ---------- Subtitle bar (X60 Y790 1800x240) ---------- */
+  #subtitleCard {
+    position: absolute; left: 60px; top: 790px; width: 1800px; height: 240px; z-index: 5;
+    padding: 22px 40px; overflow: hidden;
+    background: rgba(18,9,3,.92);
+    border: 2px solid #ffb74d; border-radius: 16px;
+    box-shadow: 0 0 24px rgba(255,152,0,.28);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
   }
-  #headline { top: 1090px; font-size: 62px; font-weight: 800; line-height: 1.3; }
-  #headline .a {
-    background: linear-gradient(90deg, #fff1d6 0%, #ffcc80 40%, #ff9800 100%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 3px 14px rgba(0,0,0,.6));
-  }
-  #headline .b { color: #fff; }
-  #sub { top: 1262px; font-size: 31px; font-weight: 600; color: #ffd9a8; line-height: 1.4; }
-  #ask { top: 1314px; font-size: 28px; font-weight: 700; color: var(--cream); line-height: 1.35; }
-  #rasiLabel { top: 1392px; font-size: 28px; font-weight: 800; color: #ffcc80; }
-  #rasiGrid {
-    top: 1436px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px;
-    font-size: 27px; font-weight: 600; color: var(--cream); line-height: 1.45;
-  }
-  #rasiGrid b { color: var(--gold); font-weight: 800; }
-  #cta { top: 1716px; font-size: 32px; font-weight: 800; color: #ffd54f; line-height: 1.4; }
-  #stay { top: 1776px; font-size: 29px; font-weight: 700; color: var(--cream); text-align: center; line-height: 1.4; }
+  #predictionText { width: 100%; text-align: center; color: var(--cream); font-size: var(--subtitle-size); font-weight: 600; line-height: 1.7; }
 
-  /* ================= CONFIG MODAL (setup only; hides on Start / Demo) ================= */
+  /* ---------- Config modal ---------- */
   #modal {
-    position: absolute; top: 560px; left: 60px; width: 960px; max-height: 1320px; overflow: auto; z-index: 100;
-    padding: 26px 32px;
+    position: absolute; top: 20px; left: 560px; width: 800px; z-index: 100;
+    padding: 24px 30px;
     background: rgba(18,9,3,.97);
-    border: 3px solid var(--gold); border-radius: 24px;
+    border: 3px solid var(--gold); border-radius: 20px;
     box-shadow: 0 0 40px rgba(255,152,0,.45);
-    color: #ffe0b2; transition: opacity .15s ease;
+    color: #ffe0b2;
   }
   #modal.hidden { display: none; }
-  #modal.ghost { opacity: .12; }
-  #modal h2 { font-size: 32px; color: var(--gold); margin-bottom: 6px; }
-  #modal h3 { font-size: 24px; color: var(--gold); margin: 22px 0 4px; }
-  #modal label.l { display: block; font-size: 21px; margin: 12px 0 5px; color: #ffcc80; }
-  #modal input[type=text], #modal input[type=password], #modal select {
+  #modal h2 { font-size: 30px; color: var(--gold); margin-bottom: 8px; }
+  #modal label { display: block; font-size: 20px; margin: 12px 0 5px; color: #ffcc80; }
+  #modal input {
     width: 100%; padding: 12px 14px; font-size: 22px; font-family: inherit;
     background: #2a1708; color: #fff3e0;
-    border: 2px solid #8d5a1f; border-radius: 12px; outline: none;
+    border: 2px solid #8d5a1f; border-radius: 10px; outline: none;
   }
-  #modal input:focus, #modal select:focus { border-color: var(--saffron); }
-  #imgRow { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
-  #thumb { display: none; width: 72px; height: 72px; object-fit: cover; border-radius: 12px; }
-  .btn2 {
-    padding: 12px 20px; font-size: 21px; font-weight: 700; cursor: pointer; font-family: inherit;
-    color: #2b1200; background: var(--gold); border: none; border-radius: 12px;
+  #modal input:focus { border-color: var(--saffron); box-shadow: 0 0 0 3px rgba(255,152,0,.3); }
+  #startBtn {
+    width: 100%; margin-top: 20px; padding: 14px;
+    font-size: 26px; font-weight: 800; cursor: pointer; font-family: inherit;
+    color: #2b1200; background: linear-gradient(135deg, #ffb74d, #ff9800);
+    border: none; border-radius: 12px;
   }
-  .btn2.ghostbtn { background: transparent; color: #ffcc80; border: 2px solid #8d5a1f; }
-  #removeImg { display: none; }
-  #fitSel { width: auto !important; margin-left: auto; font-size: 19px !important; padding: 9px 12px !important; }
-  .sl { display: grid; grid-template-columns: 190px 1fr 70px; align-items: center; gap: 12px; margin-top: 10px; font-size: 21px; color: #ffcc80; }
-  .sl input[type=range] { width: 100%; accent-color: var(--saffron); height: 30px; }
-  .sl output { text-align: right; color: #fff3e0; }
-  #btnRow { display: flex; gap: 14px; margin-top: 22px; }
-  #startBtn, #demoBtn {
-    padding: 16px; font-size: 26px; font-weight: 800; cursor: pointer; font-family: inherit; border-radius: 14px;
-  }
-  #startBtn { flex: 1.3; color: #2b1200; background: linear-gradient(135deg, #ffb74d, #ff9800); border: none; }
-  #demoBtn { flex: 1; color: var(--gold); background: transparent; border: 3px solid var(--gold); }
-  #startBtn:disabled, #testBtn:disabled { opacity: .5; cursor: wait; }
-  #startBtn:hover, #demoBtn:hover, .btn2:hover { filter: brightness(1.1); }
-  #testBtn { margin-top: 12px; }
-  #checks { margin-top: 12px; font-size: 20px; line-height: 1.5; }
-  #checks .ok { color: #9ccc65; }
-  #checks .bad { color: #ff8a80; }
-  #checks .warn { color: #ffd54f; }
-  #modalErr { margin-top: 8px; font-size: 19px; color: #ff8a80; min-height: 22px; }
-  #lastErr { margin-top: 6px; font-size: 17px; color: #ff8a80; word-break: break-word; }
-  #modal .hint { margin-top: 6px; font-size: 17px; color: #a1783f; }
+  #startBtn:hover { filter: brightness(1.08); }
+  #modalErr { margin-top: 10px; font-size: 18px; color: #ff8a80; min-height: 22px; }
+  #modal .hint { margin-top: 6px; font-size: 16px; color: #a1783f; }
 
-  #statusLine { position: absolute; top: 6px; left: 10px; z-index: 200; font: 16px monospace; color: var(--gold); display: none; }
+  #statusLine { position: absolute; bottom: 6px; left: 20px; z-index: 200; font: 15px monospace; color: var(--gold); display: none; }
   body.debug #statusLine { display: block; }
 </style>
 </head>
 <body>
 <div id="stage">
 
-  <!-- Backdrop image (optional) -->
-  <div id="bottomBg"><img id="bottomImg" alt="" /></div>
+  <div id="zodiac"></div>
+  <div id="frame"></div>
+  <div class="corner" style="top:18px;left:22px">❖</div>
+  <div class="corner" style="top:18px;right:22px">❖</div>
+  <div class="corner" style="bottom:14px;left:22px">❖</div>
+  <div class="corner" style="bottom:14px;right:22px">❖</div>
 
-  <!-- PART 1: astrologer only -->
+  <!-- Header -->
+  <div id="header">
+    <div id="titleBadge">
+      <span class="te">🚩 ప్రత్యక్ష జ్యోతిష్య దర్శనం</span>
+      <span class="en">(Live AI Telugu Astrologer)</span>
+    </div>
+    <div id="marqueeWrap">
+      <div id="marquee">
+        <span>మీ పేరు మరియు సమస్యను లైవ్ చాట్‌లో అడగండి • ఉద్యోగం, వివాహం, వ్యాపారం, ఆరోగ్యం, భవిష్యత్ ఫలాలు</span>
+        <span>మీ పేరు మరియు సమస్యను లైవ్ చాట్‌లో అడగండి • ఉద్యోగం, వివాహం, వ్యాపారం, ఆరోగ్యం, భవిష్యత్ ఫలాలు</span>
+      </div>
+    </div>
+    <div id="livePill"><span id="liveDot"></span>LIVE</div>
+  </div>
+
+  <!-- Video stage -->
   <div id="videoFrame">
     <video id="idleVideo" src="/idle.mp4" muted loop autoplay playsinline preload="auto"></video>
     <video id="talkingVideo" src="/talking.mp4" muted loop autoplay playsinline preload="auto"></video>
   </div>
 
-  <!-- PART 2: static Telugu text -->
-  <div id="chip" class="txt">🔴 లైవ్ • ఉచిత జ్యోతిష్య సలహా</div>
-  <div id="headline" class="txt">
-    <div class="a">🔥 మీ పేరు టైప్ చేయండి</div>
-    <div class="b">🙏 మీ సమస్య చెప్పండి</div>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div id="spotlight" class="panel">
+      <div class="label">ప్రస్తుతం అడిగిన భక్తుడు (Current Question)</div>
+      <div id="qTop">
+        <div id="avatar">👤</div>
+        <div id="viewerName">🙏 ఎదురుచూస్తున్నాము</div>
+        <div id="waves"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div id="questionText">లైవ్ చాట్‌లో మీ పేరు, ప్రశ్న రాయండి</div>
+    </div>
+    <div id="queuePanel" class="panel">
+      <div id="queueHead">
+        <div class="label">వరుసలో ఉన్న ప్రశ్నలు (Up Next)</div>
+        <div id="queueCount">0</div>
+      </div>
+      <ul id="queueList"></ul>
+    </div>
   </div>
-  <div id="sub" class="txt">లైవ్ చాట్‌లో రాయండి — జ్యోతిష్య ఫలం ఇక్కడే వినండి ✨</div>
-  <div id="ask" class="txt">💼 ఉద్యోగం • 💍 వివాహం • 💰 వ్యాపారం • 🏥 ఆరోగ్యం • 📚 చదువు — ఏదైనా అడగండి</div>
-  <div id="rasiLabel" class="txt">🪐 మీ రాశి &amp; అధిపతి గ్రహం</div>
-  <div id="rasiGrid" class="txt"></div>
-  <div id="cta" class="txt">👍 మీ రాశి కామెంట్ చేయండి — మీ ఫలం చెబుతాము!</div>
-  <div id="stay" class="txt">👇 చివరి వరకు ఉండండి • మీ ప్రశ్నకు సమాధానం వస్తుంది</div>
+
+  <!-- Subtitle card -->
+  <div id="subtitleCard">
+    <div id="predictionText">🪔 ఓం శ్రీ గణేశాయ నమః — మీ ప్రశ్నకు జ్యోతిష్య ఫలం ఇక్కడ కనిపిస్తుంది</div>
+  </div>
 
   <!-- Config modal -->
   <div id="modal">
     <h2>🔱 AI జ్యోతిష్య సిద్ధాంతి</h2>
-    <label class="l" for="apiKey">Gemini API Key</label>
+    <label for="apiKey">Gemini API Key</label>
     <input id="apiKey" type="password" placeholder="AIza..." autocomplete="off" />
-    <label class="l" for="ytUrl">YouTube Live URL / Video ID</label>
+    <label for="ytUrl">YouTube Live URL / Video ID</label>
     <input id="ytUrl" type="text" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" />
-
-    <h3>🎬 Astrologer video crop</h3>
-    <div class="sl"><span>Move left ↔ right</span><input id="cropX" type="range" min="0" max="100" step="1" /><output id="cropXv"></output></div>
-    <div class="sl"><span>Move up ↕ down</span><input id="cropY" type="range" min="0" max="100" step="1" /><output id="cropYv"></output></div>
-    <div class="sl"><span>Zoom</span><input id="cropZ" type="range" min="100" max="300" step="1" /><output id="cropZv"></output></div>
-    <div style="margin-top:10px"><button type="button" class="btn2 ghostbtn" id="cropReset">Reset crop</button></div>
-
-    <h3>🖼️ Backdrop image (optional)</h3>
-    <div id="imgRow">
-      <img id="thumb" alt="" />
-      <button type="button" class="btn2" id="pickBtn"><span id="imgBtnText">Choose image</span></button>
-      <button type="button" class="btn2 ghostbtn" id="removeImg">Remove</button>
-      <select id="fitSel" title="How the image fills the space">
-        <option value="cover">Fill (crop)</option>
-        <option value="contain">Fit (no crop)</option>
-      </select>
-    </div>
-    <input id="imgInput" type="file" accept="image/*" style="display:none" />
-
-    <div id="btnRow">
-      <button id="startBtn">Start Astrologer</button>
-      <button id="demoBtn">▶ Try Demo</button>
-    </div>
-    <button type="button" class="btn2 ghostbtn" id="testBtn">🧪 Test Gemini + Voice + Chat</button>
-    <div id="checks"></div>
+    <button id="startBtn">Start Astrologer</button>
     <div id="modalErr"></div>
-    <div id="lastErr"></div>
-    <div class="hint">Start checks your key, the voice and the live chat first, and shows exactly what is wrong. Demo needs no key or URL. Press <b>C</b> to reopen this panel, <b>I</b> to change the backdrop image.</div>
+    <div class="hint">Saved in this browser only. Press <b>C</b> to reopen this panel.</div>
   </div>
 
   <div id="statusLine"></div>
@@ -204,20 +272,17 @@
   'use strict';
 
   // ================= CONFIG =================
-  // Tried in order; if one is busy / rate-limited / unavailable the next one is used.
-  const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+  const GEMINI_MODEL = 'gemini-2.5-flash';
   const POLL_MS = 5000;
   const COOLDOWN_MS = 2500;      // calm breathing buffer after each answer
   const MAX_QUEUE = 25;          // protects against chat floods
+  const SHOW_UPCOMING = 4;       // rows in the "Up Next" list
   const SKIP_BACKLOG = true;     // ignore messages already in chat when started
   const LS_KEY = 'astro_gemini_key';
   const LS_URL = 'astro_yt_url';
-  const LS_FIT = 'astro_img_fit';
-  const LS_CROP = 'astro_crop';
 
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   // Same cleaning as api/chat.js (safe to run twice) so names are always speakable
   const FALLBACK_NAME = 'భక్తులు';
@@ -238,33 +303,34 @@
   const idleVideo = $('idleVideo');
   const talkingVideo = $('talkingVideo');
   const modal = $('modal');
-  const chipEl = $('chip');
+  const spotlight = $('spotlight');
+  const viewerName = $('viewerName');
+  const questionText = $('questionText');
+  const waves = $('waves');
+  const predictionText = $('predictionText');
+  const queueList = $('queueList');
+  const queueCount = $('queueCount');
   const statusLine = $('statusLine');
 
   const params = new URLSearchParams(location.search);
   if (params.get('debug')) document.body.classList.add('debug');
-  const setStatus = (s) => {
-    statusLine.textContent = s;
-    if (/^Error/.test(s)) $('lastErr').textContent = '⚠️ Last problem while running: ' + s.replace(/^Error:\s*/, '');
-  };
+  const setStatus = (s) => { statusLine.textContent = s; };
 
-  // ================= FIT 1080x1920 CANVAS TO WINDOW =================
+  // ================= ZODIAC RING (decor) =================
+  const glyphs = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+  $('zodiac').innerHTML = glyphs
+    .map((g, i) => `<span style="transform: rotate(${i * 30}deg) translateY(-500px) rotate(${-i * 30}deg)">${g}</span>`)
+    .join('');
+
+  // ================= FIT 1920x1080 CANVAS TO WINDOW =================
   function fit() {
-    const s = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     stage.style.transform = `scale(${s})`;
-    stage.style.left = Math.max(0, (window.innerWidth - 1080 * s) / 2) + 'px';
-    stage.style.top = Math.max(0, (window.innerHeight - 1920 * s) / 2) + 'px';
+    stage.style.left = Math.max(0, (window.innerWidth - 1920 * s) / 2) + 'px';
+    stage.style.top = Math.max(0, (window.innerHeight - 1080 * s) / 2) + 'px';
   }
   window.addEventListener('resize', fit);
   fit();
-
-  // ================= STATIC RASI LIST (written once, never changes) =================
-  const RASIS = [
-    ['♈', 'మేషం', 'కుజుడు'], ['♉', 'వృషభం', 'శుక్రుడు'], ['♊', 'మిథునం', 'బుధుడు'], ['♋', 'కర్కాటకం', 'చంద్రుడు'],
-    ['♌', 'సింహం', 'సూర్యుడు'], ['♍', 'కన్య', 'బుధుడు'], ['♎', 'తుల', 'శుక్రుడు'], ['♏', 'వృశ్చికం', 'కుజుడు'],
-    ['♐', 'ధనుస్సు', 'గురుడు'], ['♑', 'మకరం', 'శని'], ['♒', 'కుంభం', 'శని'], ['♓', 'మీనం', 'గురుడు'],
-  ];
-  $('rasiGrid').innerHTML = RASIS.map(([s, n, l]) => `<div><b>${s}\uFE0E</b> ${n} • ${l}</div>`).join('');
 
   // ================= VIDEO: ALWAYS SILENT =================
   function silenceVideos() {
@@ -289,141 +355,12 @@
 
   const setTalking = (on) => talkingVideo.classList.toggle('active', on);
 
-  // ================= VIDEO CROP (same crop on both loops so the crossfade stays seamless) =================
-  const CROP_DEFAULT = { x: 50, y: 35, z: 100 };
-  let crop = { ...CROP_DEFAULT };
-  try {
-    const saved = JSON.parse(localStorage.getItem(LS_CROP) || 'null');
-    if (saved && typeof saved === 'object') crop = { ...CROP_DEFAULT, ...saved };
-  } catch {}
-
-  function applyCrop() {
-    [idleVideo, talkingVideo].forEach((v) => {
-      v.style.objectPosition = `${crop.x}% ${crop.y}%`;
-      v.style.transformOrigin = `${crop.x}% ${crop.y}%`;
-      v.style.transform = `scale(${crop.z / 100})`;
-    });
-    $('cropX').value = crop.x; $('cropXv').textContent = crop.x + '%';
-    $('cropY').value = crop.y; $('cropYv').textContent = crop.y + '%';
-    $('cropZ').value = crop.z; $('cropZv').textContent = (crop.z / 100).toFixed(2) + '×';
-  }
-
-  let ghostTimer = null;
-  function ghostModal() {            // fade the panel so you can see the video while adjusting
-    modal.classList.add('ghost');
-    clearTimeout(ghostTimer);
-    ghostTimer = setTimeout(() => modal.classList.remove('ghost'), 900);
-  }
-
-  function onCropInput() {
-    crop = { x: +$('cropX').value, y: +$('cropY').value, z: +$('cropZ').value };
-    applyCrop();
-    try { localStorage.setItem(LS_CROP, JSON.stringify(crop)); } catch {}
-    ghostModal();
-  }
-  ['cropX', 'cropY', 'cropZ'].forEach((id) => $(id).addEventListener('input', onCropInput));
-  $('cropReset').addEventListener('click', () => {
-    crop = { ...CROP_DEFAULT };
-    applyCrop();
-    try { localStorage.setItem(LS_CROP, JSON.stringify(crop)); } catch {}
-  });
-  applyCrop();
-
-  // ================= BACKDROP IMAGE (saved in this browser via IndexedDB) =================
-  const bottomImg = $('bottomImg');
-  const thumb = $('thumb');
-  const imgInput = $('imgInput');
-  const fitSel = $('fitSel');
-  let imgUrl = null;
-  let hasImage = false;
-
-  const idb = {
-    open() {
-      return new Promise((resolve, reject) => {
-        const r = indexedDB.open('astro_ui', 1);
-        r.onupgradeneeded = () => r.result.createObjectStore('kv');
-        r.onsuccess = () => resolve(r.result);
-        r.onerror = () => reject(r.error);
-      });
-    },
-    async get(k) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const q = db.transaction('kv').objectStore('kv').get(k);
-        q.onsuccess = () => resolve(q.result);
-        q.onerror = () => reject(q.error);
-      });
-    },
-    async set(k, v) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('kv', 'readwrite');
-        tx.objectStore('kv').put(v, k);
-        tx.oncomplete = resolve;
-        tx.onerror = () => reject(tx.error);
-      });
-    },
-    async del(k) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('kv', 'readwrite');
-        tx.objectStore('kv').delete(k);
-        tx.oncomplete = resolve;
-        tx.onerror = () => reject(tx.error);
-      });
-    },
-  };
-
-  function applyImage(blob) {
-    if (imgUrl) { URL.revokeObjectURL(imgUrl); imgUrl = null; }
-    hasImage = !!blob;
-    if (blob) {
-      imgUrl = URL.createObjectURL(blob);
-      bottomImg.src = imgUrl;
-      thumb.src = imgUrl;
-    } else {
-      bottomImg.removeAttribute('src');
-      thumb.removeAttribute('src');
-    }
-    bottomImg.style.display = hasImage ? 'block' : 'none';
-    thumb.style.display = hasImage ? 'block' : 'none';
-    $('removeImg').style.display = hasImage ? 'inline-block' : 'none';
-    $('imgBtnText').textContent = hasImage ? 'Change image' : 'Choose image';
-  }
-
-  function applyFit(v) {
-    const fitVal = v === 'contain' ? 'contain' : 'cover';
-    bottomImg.style.objectFit = fitVal;
-    fitSel.value = fitVal;
-  }
-
-  function openImagePicker() { imgInput.click(); }
-
-  $('pickBtn').addEventListener('click', openImagePicker);
-  imgInput.addEventListener('change', () => {
-    const file = imgInput.files && imgInput.files[0];
-    imgInput.value = '';                       // allows re-picking the same file
-    if (!file || !file.type.startsWith('image/')) return;
-    applyImage(file);
-    idb.set('bottomImage', file).catch((e) => console.warn('Could not save image:', e));
-  });
-  $('removeImg').addEventListener('click', () => {
-    applyImage(null);
-    idb.del('bottomImage').catch(() => {});
-  });
-  fitSel.addEventListener('change', () => {
-    applyFit(fitSel.value);
-    try { localStorage.setItem(LS_FIT, fitSel.value); } catch {}
-  });
-
-  try { applyFit(localStorage.getItem(LS_FIT) || 'cover'); } catch { applyFit('cover'); }
-  idb.get('bottomImage').then((blob) => { if (blob) applyImage(blob); }).catch(() => {});
-
   // ================= STATE =================
   const seen = new Set();
   const queue = [];
-  const state = { apiKey: '', videoId: '', firstPoll: true, busy: false, polling: false, started: false, demo: false };
+  const state = { apiKey: '', videoId: '', firstPoll: true, busy: false, polling: false, started: false };
 
+  // ================= HELPERS =================
   function extractVideoId(input) {
     const s = String(input || '').trim();
     if (/^[\w-]{11}$/.test(s)) return s;
@@ -434,7 +371,37 @@
     return m ? m[1] : null;
   }
 
-  // ================= GEMINI (with model fallback) =================
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function renderQueue() {
+    queueCount.textContent = String(queue.length);
+    if (!queue.length) {
+      queueList.innerHTML = '<li class="empty">ఇప్పుడు ఎవరూ వరుసలో లేరు…</li>';
+      return;
+    }
+    queueList.innerHTML = queue
+      .slice(0, SHOW_UPCOMING)
+      .map((q) => `<li><b>👤 ${esc(q.author)}:</b> ${esc(q.message)}</li>`)
+      .join('');
+  }
+
+  function setWaves(mode) { waves.className = mode || ''; }   // 'thinking' | 'speaking' | ''
+
+  function showViewer(item) {
+    viewerName.textContent = item.author === FALLBACK_NAME ? `👤 ${item.author}` : `👤 ${item.author} గారు`;
+    questionText.textContent = `“${item.message}”`;
+    spotlight.classList.remove('pop');
+    void spotlight.offsetWidth;       // restart animation
+    spotlight.classList.add('pop');
+  }
+
+  function showIdle() {
+    setWaves('');
+    viewerName.textContent = '🙏 ఎదురుచూస్తున్నాము';
+    questionText.textContent = 'లైవ్ చాట్‌లో మీ పేరు, ప్రశ్న రాయండి';
+  }
+
+  // ================= GEMINI =================
   function buildPrompt(author, message) {
     const known = author !== FALLBACK_NAME;
     const greeting = known
@@ -463,71 +430,42 @@ Rules:
       .slice(0, 600);
   }
 
-  // Returns raw text. Throws an Error with .fatal = true only when the key itself is rejected.
-  async function callGemini(key, prompt, maxTokens) {
-    let lastErr = null;
-    for (const model of MODELS) {
-      try {
-        const gen = { temperature: 0.8, maxOutputTokens: maxTokens };
-        if (model.startsWith('gemini-2.5')) gen.thinkingConfig = { thinkingBudget: 0 };
-        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gen }),
-        });
-        if (!resp.ok) {
-          const t = await resp.text().catch(() => '');
-          const err = new Error(`${model} → HTTP ${resp.status} ${t.replace(/\s+/g, ' ').slice(0, 140)}`);
-          if (resp.status === 401 || resp.status === 403 || /API key|API_KEY/i.test(t)) { err.fatal = true; throw err; }
-          lastErr = err;                       // 404 / 429 / 5xx / other 400 → try the next model
-          continue;
-        }
-        const data = await resp.json();
-        const text = (data?.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
-        if (!text.trim()) {
-          lastErr = new Error(`${model} → empty reply (${data?.candidates?.[0]?.finishReason || data?.promptFeedback?.blockReason || 'unknown'})`);
-          continue;
-        }
-        return text;
-      } catch (e) {
-        if (e.fatal) throw e;
-        lastErr = e;                           // network / CORS error → try the next model
-      }
-    }
-    throw lastErr || new Error('Gemini unavailable');
-  }
-
   async function askGemini(author, message) {
-    const raw = await callGemini(state.apiKey, buildPrompt(author, message), 1024);
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': state.apiKey },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: buildPrompt(author, message) }] }],
+        generationConfig: {
+          temperature: 0.8,
+          maxOutputTokens: 1024,
+          thinkingConfig: { thinkingBudget: 0 },
+        },
+      }),
+    });
+    if (!resp.ok) {
+      const t = await resp.text().catch(() => '');
+      throw new Error(`Gemini ${resp.status}: ${t.slice(0, 200)}`);
+    }
+    const data = await resp.json();
+    const raw = (data?.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
     const cleaned = cleanTelugu(raw);
-    if (!cleaned) throw new Error('Gemini reply had no Telugu text');
+    if (!cleaned) throw new Error('Gemini returned empty/non-Telugu text');
     // Safety net: if the name was lost, never let a bare "గారు" be spoken
     if (/^\s*గారు/.test(cleaned)) return cleaned.replace(/^\s*గారు[,\s]*/, 'భక్తులారా, ');
     if (author !== FALLBACK_NAME && !cleaned.includes('గారు')) return 'నమస్కారం. ' + cleaned;
     return cleaned;
   }
 
-  // Built-in answers: used only if Gemini cannot answer, so the stream never goes silent
-  const FALLBACK_ANSWERS = [
-    'గ్రహ బలం మీకు అనుకూలంగా ఉంది, ఓపికతో ముందుకు సాగితే శుభ ఫలితాలు లభిస్తాయి. ప్రతి రోజు ఇష్ట దైవాన్ని స్మరించండి.',
-    'మీ సమస్యలు త్వరలోనే తొలగిపోతాయి, గురు బలం మీకు తోడుగా ఉంది. గురువారం గణపతి పూజ చేయడం శుభం.',
-    'కష్టపడి పనిచేస్తే మంచి అవకాశాలు వస్తాయి, ఆందోళన వద్దు. శివారాధన, హనుమాన్ చాలీసా పఠనం మంచి ఫలితాలు ఇస్తాయి.',
-  ];
-  let fbIdx = 0;
-  function fallbackAnswer(author) {
-    const body = FALLBACK_ANSWERS[fbIdx++ % FALLBACK_ANSWERS.length];
-    const teluguName = author !== FALLBACK_NAME && !/[A-Za-z0-9]/.test(author);
-    return (teluguName ? `${author} గారు, నమస్కారం. ` : 'భక్తులారా, నమస్కారం. ') + body;
-  }
-
   // ================= TTS + AUDIO/VIDEO SYNC =================
   async function speak(text) {
     const resp = await fetch('/api/tts?text=' + encodeURIComponent(text));
-    if (!resp.ok) throw new Error('Voice (/api/tts) failed: HTTP ' + resp.status);
+    if (!resp.ok) throw new Error('TTS failed: ' + resp.status);
     const blob = await resp.blob();
     const objUrl = URL.createObjectURL(blob);
 
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
       const audio = new Audio();
       audio.src = objUrl;
       audio.volume = 1;
@@ -536,51 +474,28 @@ Rules:
         if (done) return;
         done = true;
         setTalking(false);
+        setWaves('');
         URL.revokeObjectURL(objUrl);
         resolve();
       };
-      const fail = (e) => {
-        if (done) return;
-        done = true;
-        setTalking(false);
-        URL.revokeObjectURL(objUrl);
-        reject(e);
-      };
-      audio.addEventListener('playing', () => setTalking(true));
+      audio.addEventListener('playing', () => { setTalking(true); setWaves('speaking'); });
       audio.addEventListener('ended', finish);
-      audio.addEventListener('error', () => fail(new Error('Audio could not be played')));
+      audio.addEventListener('error', finish);
       const p = audio.play();
-      if (p && p.catch) p.catch((e) => fail(new Error('Browser blocked audio: ' + (e.message || e))));
+      if (p && p.catch) p.catch((e) => { console.error('Audio play blocked:', e); finish(); });
     });
-  }
-
-  // Demo fallback when no voice is available: same talking animation, silent
-  async function fakeSpeak(text) {
-    setTalking(true);
-    await sleep(Math.min(16000, 2500 + text.length * 70));
-    setTalking(false);
   }
 
   // ================= QUEUE (strictly one by one) =================
   async function handleItem(item) {
-    let answer = item.demoAnswer;
-    if (!answer) {
-      setStatus('Asking Gemini…');
-      try {
-        answer = await askGemini(item.author, item.message);
-      } catch (e) {
-        console.error('Gemini failed, using built-in answer:', e);
-        setStatus('Error: Gemini failed (' + (e.message || e) + ') – used a built-in answer');
-        answer = fallbackAnswer(item.author);
-      }
-    }
+    showViewer(item);
+    setWaves('thinking');
+    predictionText.textContent = '🪔 గ్రహ స్థితులు పరిశీలిస్తున్నాను...';
+    setStatus('Asking Gemini…');
+    const answer = await askGemini(item.author, item.message);
+    predictionText.textContent = answer;
     setStatus('Speaking…');
-    try {
-      await speak(answer);
-    } catch (e) {
-      if (item.demo) await fakeSpeak(answer);
-      else throw e;
-    }
+    await speak(answer);
   }
 
   async function processQueue() {
@@ -589,18 +504,22 @@ Rules:
     try {
       while (queue.length) {
         const item = queue.shift();
+        renderQueue();
         try {
           await handleItem(item);
         } catch (err) {
           console.error('Item failed:', err);
           setTalking(false);
+          setWaves('');
           setStatus('Error: ' + (err.message || err));
         }
         await sleep(COOLDOWN_MS);
       }
     } finally {
       state.busy = false;
-      if (!/^Error/.test(statusLine.textContent)) setStatus(state.demo ? 'Demo running' : 'Waiting for chat…');
+      showIdle();
+      renderQueue();
+      setStatus('Waiting for chat…');
     }
   }
 
@@ -627,10 +546,11 @@ Rules:
           message: String(m.message).slice(0, 200),
         });
       }
+      renderQueue();
       processQueue();
     } catch (err) {
       console.error('Poll failed:', err);
-      setStatus('Error: chat not readable – ' + (err.message || err));
+      setStatus('Chat error: ' + (err.message || err));
     }
   }
 
@@ -644,181 +564,42 @@ Rules:
     state.polling = false;
   }
 
-  // ================= PRE-FLIGHT CHECKS (shown in the panel) =================
-  function showChecks(lines) {
-    $('checks').innerHTML = lines.map((l) => `<div class="${l.cls}">${esc(l.text)}</div>`).join('');
-  }
-
-  async function runChecks(key, vid) {
-    const lines = [];
-    let blocking = false;
-
-    // 1) Gemini
-    try {
-      await callGemini(key, 'Reply with one short Telugu greeting only.', 64);
-      lines.push({ cls: 'ok', text: '✅ Gemini key works' });
-    } catch (e) {
-      if (e.fatal) {
-        blocking = true;
-        lines.push({ cls: 'bad', text: '❌ Gemini rejected the key: ' + e.message });
-      } else {
-        lines.push({ cls: 'warn', text: '⚠️ Gemini is busy/unreachable right now: ' + e.message + ' — built-in answers will be used if it keeps failing.' });
-      }
-    }
-
-    // 2) Voice
-    try {
-      const r = await fetch('/api/tts?text=' + encodeURIComponent('నమస్కారం'));
-      if (!r.ok) {
-        const body = (await r.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160);
-        throw new Error(`HTTP ${r.status} ${body}`);
-      }
-      const b = await r.blob();
-      if (b.size < 500) throw new Error('empty audio');
-      lines.push({ cls: 'ok', text: '✅ Telugu voice works' });
-    } catch (e) {
-      blocking = true;
-      lines.push({ cls: 'bad', text: '❌ Voice (/api/tts) not working: ' + (e.message || e) + ' — open the site from your Vercel URL and check the function logs.' });
-    }
-
-    // 3) Live chat
-    if (vid) {
-      try {
-        const r = await fetch('/api/chat?videoId=' + encodeURIComponent(vid), { cache: 'no-store' });
-        const d = await r.json();
-        if (!Array.isArray(d)) throw new Error(d?.error || 'bad response');
-        lines.push({ cls: 'ok', text: `✅ Live chat readable (${d.length} recent messages)` });
-      } catch (e) {
-        lines.push({ cls: 'warn', text: '⚠️ Live chat not readable yet: ' + (e.message || e) + ' — check the video is live with chat on.' });
-      }
-    }
-    return { lines, blocking };
-  }
-
-  // ================= DEMO MODE (no API key / URL needed) =================
-  const DEMO = [
-    { n: 'సురేష్ కుమార్', q: 'నాకు ఉద్యోగం ఎప్పుడు వస్తుంది?',
-      a: 'సురేష్ కుమార్ గారు, నమస్కారం. గురు బలం పెరుగుతున్నందున రాబోయే నెలల్లో మీకు మంచి ఉద్యోగ అవకాశం లభిస్తుంది. ప్రతి గురువారం గణపతి పూజ చేస్తే శుభం కలుగుతుంది.' },
-    { n: 'లక్ష్మీ దేవి', q: 'నా పెళ్లి ఎప్పుడు అవుతుంది?',
-      a: 'లక్ష్మీ దేవి గారు, నమస్కారం. మీ జాతకంలో శుక్ర బలం బాగుంది, త్వరలోనే మంచి సంబంధం కుదిరే అవకాశం ఉంది. ప్రతి శుక్రవారం లక్ష్మీదేవి ఆరాధన చేయండి.' },
-    { n: 'రవి తేజ', q: 'వ్యాపారంలో నష్టాలు వస్తున్నాయి, ఏం చేయాలి?',
-      a: 'రవి తేజ గారు, నమస్కారం. సహనంతో, పట్టుదలతో ముందుకు సాగితే వ్యాపారం మళ్లీ పుంజుకుంటుంది. ప్రతి మంగళవారం హనుమాన్ చాలీసా పఠించండి.' },
-    { n: 'అనిత', q: 'నా ఆరోగ్యం ఎలా ఉంటుంది?',
-      a: 'అనిత గారు, నమస్కారం. మనసును ప్రశాంతంగా ఉంచుకుంటే మీ ఆరోగ్యం క్రమంగా మెరుగుపడుతుంది. ప్రతి సోమవారం శివారాధన చేయడం మంచిది.' },
-  ];
-  let demoTimer = null;
-  let demoI = 0;
-
-  function pushDemo() {
-    const d = DEMO[demoI++ % DEMO.length];
-    queue.push({ id: 'demo' + demoI, author: d.n, message: d.q, demo: true, demoAnswer: d.a });
-    processQueue();
-  }
-
-  function stopDemo() {
-    clearInterval(demoTimer);
-    demoTimer = null;
-    if (state.demo) {
-      state.demo = false;
-      queue.length = 0;
-      chipEl.textContent = '🔴 లైవ్ • ఉచిత జ్యోతిష్య సలహా';
-    }
-  }
-
-  function startDemo() {
-    stopDemo();
-    state.started = false;            // stop any real chat polling
-    state.demo = true;
-    queue.length = 0;
-    chipEl.textContent = '🔴 లైవ్ • ఉచిత జ్యోతిష్య సలహా • DEMO';
-    setModal(false);
-    silenceVideos();
-    keepVideosPlaying();
-    setStatus('Demo running');
-    pushDemo();
-    demoTimer = setInterval(() => { if (!state.busy && queue.length === 0) pushDemo(); }, 3000);
-  }
-
   // ================= START / MODAL =================
-  function setModal(show) { modal.classList.toggle('hidden', !show); }
-
-  let startAnyway = false;
-  function resetStartAnyway() { startAnyway = false; $('startBtn').textContent = 'Start Astrologer'; }
-  $('apiKey').addEventListener('input', resetStartAnyway);
-  $('ytUrl').addEventListener('input', resetStartAnyway);
-
-  function readInputs() {
+  function start() {
     const key = $('apiKey').value.trim();
     const vid = extractVideoId($('ytUrl').value);
     const err = $('modalErr');
     err.textContent = '';
-    if (!key) { err.textContent = 'Please enter your Gemini API key (or press Try Demo).'; return null; }
-    if (!vid) { err.textContent = 'Please enter a valid YouTube Live URL or Video ID.'; return null; }
-    return { key, vid };
-  }
-
-  async function start() {
-    const inp = readInputs();
-    if (!inp) return;
-    const { key, vid } = inp;
-
-    if (!startAnyway) {
-      const btn = $('startBtn');
-      btn.disabled = true;
-      showChecks([{ cls: 'warn', text: '⏳ Checking Gemini, voice and live chat…' }]);
-      const { lines, blocking } = await runChecks(key, vid);
-      showChecks(lines);
-      btn.disabled = false;
-      if (blocking) {
-        startAnyway = true;
-        btn.textContent = 'Start anyway';
-        $('modalErr').textContent = 'Fix the red items above, or press Start anyway.';
-        return;
-      }
-    }
+    if (!key) { err.textContent = 'Please enter your Gemini API key.'; return; }
+    if (!vid) { err.textContent = 'Please enter a valid YouTube Live URL or Video ID.'; return; }
 
     try {
       localStorage.setItem(LS_KEY, key);
       localStorage.setItem(LS_URL, $('ytUrl').value.trim());
     } catch {}
 
-    stopDemo();
     state.apiKey = key;
     state.videoId = vid;
     state.firstPoll = true;
     state.started = true;
     seen.clear();
     queue.length = 0;
-    $('lastErr').textContent = '';
+    renderQueue();
 
-    setModal(false);
+    modal.classList.add('hidden');
     silenceVideos();
     keepVideosPlaying();
     setStatus('Starting…');
     pollLoop();
   }
 
-  async function testOnly() {
-    const key = $('apiKey').value.trim();
-    const vid = extractVideoId($('ytUrl').value);
-    $('modalErr').textContent = '';
-    if (!key) { $('modalErr').textContent = 'Enter your Gemini API key first.'; return; }
-    const btn = $('testBtn');
-    btn.disabled = true;
-    showChecks([{ cls: 'warn', text: '⏳ Checking…' }]);
-    const { lines } = await runChecks(key, vid);
-    showChecks(lines);
-    btn.disabled = false;
-  }
-
   $('startBtn').addEventListener('click', start);
-  $('demoBtn').addEventListener('click', startDemo);
-  $('testBtn').addEventListener('click', testOnly);
   document.addEventListener('keydown', (e) => {
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
-    if (e.key === 'c' || e.key === 'C') setModal(modal.classList.contains('hidden'));
-    if (e.key === 'i' || e.key === 'I') openImagePicker();
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'c' || e.key === 'C') modal.classList.toggle('hidden');
   });
+
+  renderQueue();
 
   // Restore saved entries so friends don't re-type them
   try {
@@ -826,9 +607,8 @@ Rules:
     $('ytUrl').value = localStorage.getItem(LS_URL) || '';
   } catch {}
 
-  // Optional: /?demo=1 starts the demo; /?autostart=1 starts with saved values (skips the checks)
-  if (params.get('demo')) startDemo();
-  else if (params.get('autostart') && $('apiKey').value && $('ytUrl').value) { startAnyway = true; start(); }
+  // Optional: /?autostart=1 begins immediately when saved values exist (handy in OBS)
+  if (params.get('autostart') && $('apiKey').value && $('ytUrl').value) start();
 })();
 </script>
 </body>
