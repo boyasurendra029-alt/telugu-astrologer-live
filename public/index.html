@@ -17,7 +17,7 @@
   }
 
   /* Fixed 1080x1920 (9:16) canvas, scaled to fit any window (scale = 1 in OBS at 1080x1920).
-     Two parts, one continuous background: astrologer only on top, Telugu text below. No borders. */
+     Two parts, one continuous background: astrologer only on top, static Telugu text below. */
   #stage {
     position: absolute; top: 0; left: 0;
     width: 1080px; height: 1920px;
@@ -56,91 +56,34 @@
     background: linear-gradient(180deg, rgba(18,6,2,.35) 0%, rgba(18,6,2,.6) 100%);
   }
 
-  /* ================= PART 2: TELUGU TEXT (scroll-stopper + retention) ================= */
-  .txt { position: absolute; left: 60px; width: 870px; z-index: 2; }   /* right 150px kept clear for Shorts buttons */
+  /* ================= PART 2: STATIC TELUGU TEXT (no animation, never changes) ================= */
+  .txt { position: absolute; left: 60px; width: 870px; z-index: 2; text-shadow: 0 2px 12px rgba(0,0,0,.65); }  /* right 150px kept clear for Shorts buttons */
 
   #chip {
-    top: 1038px; width: auto; padding: 3px 24px;
-    font-size: 28px; font-weight: 800; color: #fff; background: #d50000; border-radius: 26px;
-    animation: chipPulse 1.6s ease-in-out infinite;
+    top: 1036px; width: auto; padding: 3px 24px;
+    font-size: 28px; font-weight: 800; color: #fff; background: #d50000; border-radius: 26px; text-shadow: none;
   }
-  @keyframes chipPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(213,0,0,.6); } 50% { box-shadow: 0 0 0 14px rgba(213,0,0,0); } }
-
-  #hook {
-    top: 1094px; height: 210px; display: flex; align-items: center;
-    font-size: 52px; font-weight: 800; line-height: 1.32;
+  #headline { top: 1090px; font-size: 62px; font-weight: 800; line-height: 1.3; }
+  #headline .a {
     background: linear-gradient(90deg, #fff1d6 0%, #ffcc80 40%, #ff9800 100%);
     -webkit-background-clip: text; background-clip: text; color: transparent;
     filter: drop-shadow(0 3px 14px rgba(0,0,0,.6));
-    transition: opacity .4s ease, transform .4s ease;
-    animation: hookPulse 2.4s ease-in-out infinite;
   }
-  #hook.swap { opacity: 0; transform: translateX(-26px); }
-  @keyframes hookPulse { 0%,100% { letter-spacing: 0; } 50% { letter-spacing: .6px; } }
-
-  #live { top: 1312px; height: 398px; }
-  .view { position: absolute; inset: 0; transition: opacity .45s ease, transform .45s ease; }
-
-  /* Rasi view */
-  #rasiView { display: flex; align-items: center; }
-  #rasiInner { display: flex; align-items: center; gap: 28px; width: 100%; transition: opacity .45s ease, transform .45s ease; }
-  #rasiInner.swap { opacity: 0; transform: translateY(18px); }
-  #rSym {
-    flex: 0 0 190px; height: 190px; display: flex; align-items: center; justify-content: center;
-    font-size: 130px; line-height: 1; color: #ffcc80;
-    background: radial-gradient(circle, rgba(255,152,0,.38) 0%, rgba(255,152,0,0) 68%);
-    text-shadow: 0 0 28px rgba(255,152,0,.7);
+  #headline .b { color: #fff; }
+  #sub { top: 1262px; font-size: 31px; font-weight: 600; color: #ffd9a8; line-height: 1.4; }
+  #ask { top: 1314px; font-size: 28px; font-weight: 700; color: var(--cream); line-height: 1.35; }
+  #rasiLabel { top: 1392px; font-size: 28px; font-weight: 800; color: #ffcc80; }
+  #rasiGrid {
+    top: 1436px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px;
+    font-size: 27px; font-weight: 600; color: var(--cream); line-height: 1.45;
   }
-  #rText { flex: 1; }
-  #rLabel { font-size: 26px; font-weight: 700; color: #ffcc80; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
-  #rName { font-size: 68px; font-weight: 800; color: var(--gold); line-height: 1.15; text-shadow: 0 3px 14px rgba(0,0,0,.6); }
-  #rMeta { margin-top: 2px; font-size: 27px; font-weight: 600; color: #ffcc80; line-height: 1.45; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
-  #rTrait { margin-top: 8px; font-size: 32px; font-weight: 600; color: var(--cream); line-height: 1.45; text-shadow: 0 2px 12px rgba(0,0,0,.65); }
-  #rCta { margin-top: 8px; font-size: 29px; font-weight: 800; color: #ffd54f; text-shadow: 0 2px 12px rgba(0,0,0,.65); }
-
-  /* Live question + answer view */
-  #answerView { opacity: 0; transform: translateY(18px); pointer-events: none; }
-  #live.answer #answerView { opacity: 1; transform: none; }
-  #live.answer #rasiView { opacity: 0; transform: translateY(-18px); }
-  #aHead { display: flex; align-items: center; gap: 16px; }
-  #viewerName {
-    flex: 1; font-size: 38px; font-weight: 800; color: var(--gold);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 3px 12px rgba(0,0,0,.6);
-  }
-  #waves { flex: 0 0 auto; display: flex; align-items: center; gap: 5px; height: 48px; }
-  #waves i { display: block; width: 7px; height: 10px; border-radius: 4px; background: var(--saffron); }
-  #waves.thinking i { animation: bounce 1.2s ease-in-out infinite; opacity: .7; }
-  #waves.speaking i { animation: bounce .55s ease-in-out infinite; }
-  #waves i:nth-child(1) { animation-delay: 0s; }
-  #waves i:nth-child(2) { animation-delay: .1s; }
-  #waves i:nth-child(3) { animation-delay: .2s; }
-  #waves i:nth-child(4) { animation-delay: .3s; }
-  #waves i:nth-child(5) { animation-delay: .15s; }
-  #waves i:nth-child(6) { animation-delay: .05s; }
-  @keyframes bounce { 0%,100% { height: 8px; } 50% { height: 44px; } }
-  #questionText {
-    margin-top: 4px; font-size: 28px; font-weight: 600; color: #ffd9a8;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 2px 10px rgba(0,0,0,.6);
-  }
-  #predictionText {
-    margin-top: 12px; font-size: 36px; font-weight: 600; color: #fff; line-height: 1.45;
-    display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden;
-    text-shadow: 0 2px 14px rgba(0,0,0,.7);
-  }
-
-  #strip { top: 1724px; display: flex; justify-content: space-between; align-items: center; }
-  #strip span { font-size: 48px; color: #ffcc80; opacity: .32; transition: all .4s ease; line-height: 1; }
-  #strip span.on { opacity: 1; transform: scale(1.4); color: var(--gold); text-shadow: 0 0 22px rgba(255,152,0,.9); }
-
-  #stay {
-    top: 1784px; font-size: 30px; font-weight: 700; color: #fff3e0; text-align: center;
-    text-shadow: 0 2px 12px rgba(0,0,0,.7); animation: breathe 2.6s ease-in-out infinite;
-  }
-  @keyframes breathe { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+  #rasiGrid b { color: var(--gold); font-weight: 800; }
+  #cta { top: 1716px; font-size: 32px; font-weight: 800; color: #ffd54f; line-height: 1.4; }
+  #stay { top: 1776px; font-size: 29px; font-weight: 700; color: var(--cream); text-align: center; line-height: 1.4; }
 
   /* ================= CONFIG MODAL (setup only; hides on Start / Demo) ================= */
   #modal {
-    position: absolute; top: 700px; left: 60px; width: 960px; max-height: 1180px; overflow: auto; z-index: 100;
+    position: absolute; top: 560px; left: 60px; width: 960px; max-height: 1320px; overflow: auto; z-index: 100;
     padding: 26px 32px;
     background: rgba(18,9,3,.97);
     border: 3px solid var(--gold); border-radius: 24px;
@@ -176,13 +119,19 @@
   }
   #startBtn { flex: 1.3; color: #2b1200; background: linear-gradient(135deg, #ffb74d, #ff9800); border: none; }
   #demoBtn { flex: 1; color: var(--gold); background: transparent; border: 3px solid var(--gold); }
+  #startBtn:disabled, #testBtn:disabled { opacity: .5; cursor: wait; }
   #startBtn:hover, #demoBtn:hover, .btn2:hover { filter: brightness(1.1); }
-  #modalErr { margin-top: 10px; font-size: 19px; color: #ff8a80; min-height: 22px; }
+  #testBtn { margin-top: 12px; }
+  #checks { margin-top: 12px; font-size: 20px; line-height: 1.5; }
+  #checks .ok { color: #9ccc65; }
+  #checks .bad { color: #ff8a80; }
+  #checks .warn { color: #ffd54f; }
+  #modalErr { margin-top: 8px; font-size: 19px; color: #ff8a80; min-height: 22px; }
+  #lastErr { margin-top: 6px; font-size: 17px; color: #ff8a80; word-break: break-word; }
   #modal .hint { margin-top: 6px; font-size: 17px; color: #a1783f; }
 
   #statusLine { position: absolute; top: 6px; left: 10px; z-index: 200; font: 16px monospace; color: var(--gold); display: none; }
   body.debug #statusLine { display: block; }
-  #hiddenUI { display: none; }
 </style>
 </head>
 <body>
@@ -197,36 +146,17 @@
     <video id="talkingVideo" src="/talking.mp4" muted loop autoplay playsinline preload="auto"></video>
   </div>
 
-  <!-- PART 2: Telugu text -->
+  <!-- PART 2: static Telugu text -->
   <div id="chip" class="txt">🔴 లైవ్ • ఉచిత జ్యోతిష్య సలహా</div>
-  <div id="hook" class="txt"></div>
-
-  <div id="live" class="txt">
-    <!-- Rotating rasi info -->
-    <div id="rasiView" class="view">
-      <div id="rasiInner">
-        <div id="rSym"></div>
-        <div id="rText">
-          <div id="rLabel">🪐 రాశి విశేషాలు</div>
-          <div id="rName"></div>
-          <div id="rMeta"></div>
-          <div id="rTrait"></div>
-          <div id="rCta">👍 ఇది మీ రాశి అయితే కామెంట్ చేయండి!</div>
-        </div>
-      </div>
-    </div>
-    <!-- Live question + answer -->
-    <div id="answerView" class="view">
-      <div id="aHead">
-        <div id="viewerName"></div>
-        <div id="waves"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-      </div>
-      <div id="questionText"></div>
-      <div id="predictionText"></div>
-    </div>
+  <div id="headline" class="txt">
+    <div class="a">🔥 మీ పేరు టైప్ చేయండి</div>
+    <div class="b">🙏 మీ సమస్య చెప్పండి</div>
   </div>
-
-  <div id="strip" class="txt"></div>
+  <div id="sub" class="txt">లైవ్ చాట్‌లో రాయండి — జ్యోతిష్య ఫలం ఇక్కడే వినండి ✨</div>
+  <div id="ask" class="txt">💼 ఉద్యోగం • 💍 వివాహం • 💰 వ్యాపారం • 🏥 ఆరోగ్యం • 📚 చదువు — ఏదైనా అడగండి</div>
+  <div id="rasiLabel" class="txt">🪐 మీ రాశి &amp; అధిపతి గ్రహం</div>
+  <div id="rasiGrid" class="txt"></div>
+  <div id="cta" class="txt">👍 మీ రాశి కామెంట్ చేయండి — మీ ఫలం చెబుతాము!</div>
   <div id="stay" class="txt">👇 చివరి వరకు ఉండండి • మీ ప్రశ్నకు సమాధానం వస్తుంది</div>
 
   <!-- Config modal -->
@@ -259,18 +189,14 @@
       <button id="startBtn">Start Astrologer</button>
       <button id="demoBtn">▶ Try Demo</button>
     </div>
+    <button type="button" class="btn2 ghostbtn" id="testBtn">🧪 Test Gemini + Voice + Chat</button>
+    <div id="checks"></div>
     <div id="modalErr"></div>
-    <div class="hint">Demo needs no API key or URL: sample viewers are answered automatically (with voice if the site's /api/tts is reachable). Press <b>C</b> to reopen this panel, <b>I</b> to change the backdrop image.</div>
+    <div id="lastErr"></div>
+    <div class="hint">Start checks your key, the voice and the live chat first, and shows exactly what is wrong. Demo needs no key or URL. Press <b>C</b> to reopen this panel, <b>I</b> to change the backdrop image.</div>
   </div>
 
   <div id="statusLine"></div>
-
-  <!-- Elements the logic updates; not shown on the stream -->
-  <div id="hiddenUI">
-    <div id="spotlight"></div>
-    <ul id="queueList"></ul>
-    <div id="queueCount"></div>
-  </div>
 </div>
 
 <script>
@@ -278,14 +204,12 @@
   'use strict';
 
   // ================= CONFIG =================
-  const GEMINI_MODEL = 'gemini-2.5-flash';
+  // Tried in order; if one is busy / rate-limited / unavailable the next one is used.
+  const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
   const POLL_MS = 5000;
   const COOLDOWN_MS = 2500;      // calm breathing buffer after each answer
   const MAX_QUEUE = 25;          // protects against chat floods
-  const SHOW_UPCOMING = 4;
   const SKIP_BACKLOG = true;     // ignore messages already in chat when started
-  const RASI_MS = 7000;          // how long each rasi stays on screen
-  const HOOK_MS = 5500;          // how long each scroll-stopper line stays
   const LS_KEY = 'astro_gemini_key';
   const LS_URL = 'astro_yt_url';
   const LS_FIT = 'astro_img_fit';
@@ -293,6 +217,7 @@
 
   const $ = (id) => document.getElementById(id);
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   // Same cleaning as api/chat.js (safe to run twice) so names are always speakable
   const FALLBACK_NAME = 'భక్తులు';
@@ -313,18 +238,15 @@
   const idleVideo = $('idleVideo');
   const talkingVideo = $('talkingVideo');
   const modal = $('modal');
-  const live = $('live');
-  const viewerName = $('viewerName');
-  const questionText = $('questionText');
-  const waves = $('waves');
-  const predictionText = $('predictionText');
-  const queueList = $('queueList');
-  const queueCount = $('queueCount');
+  const chipEl = $('chip');
   const statusLine = $('statusLine');
 
   const params = new URLSearchParams(location.search);
   if (params.get('debug')) document.body.classList.add('debug');
-  const setStatus = (s) => { statusLine.textContent = s; };
+  const setStatus = (s) => {
+    statusLine.textContent = s;
+    if (/^Error/.test(s)) $('lastErr').textContent = '⚠️ Last problem while running: ' + s.replace(/^Error:\s*/, '');
+  };
 
   // ================= FIT 1080x1920 CANVAS TO WINDOW =================
   function fit() {
@@ -335,6 +257,14 @@
   }
   window.addEventListener('resize', fit);
   fit();
+
+  // ================= STATIC RASI LIST (written once, never changes) =================
+  const RASIS = [
+    ['♈', 'మేషం', 'కుజుడు'], ['♉', 'వృషభం', 'శుక్రుడు'], ['♊', 'మిథునం', 'బుధుడు'], ['♋', 'కర్కాటకం', 'చంద్రుడు'],
+    ['♌', 'సింహం', 'సూర్యుడు'], ['♍', 'కన్య', 'బుధుడు'], ['♎', 'తుల', 'శుక్రుడు'], ['♏', 'వృశ్చికం', 'కుజుడు'],
+    ['♐', 'ధనుస్సు', 'గురుడు'], ['♑', 'మకరం', 'శని'], ['♒', 'కుంభం', 'శని'], ['♓', 'మీనం', 'గురుడు'],
+  ];
+  $('rasiGrid').innerHTML = RASIS.map(([s, n, l]) => `<div><b>${s}\uFE0E</b> ${n} • ${l}</div>`).join('');
 
   // ================= VIDEO: ALWAYS SILENT =================
   function silenceVideos() {
@@ -489,72 +419,11 @@
   try { applyFit(localStorage.getItem(LS_FIT) || 'cover'); } catch { applyFit('cover'); }
   idb.get('bottomImage').then((blob) => { if (blob) applyImage(blob); }).catch(() => {});
 
-  // ================= SCROLL-STOPPER HOOKS (rotating headline) =================
-  const HOOKS = [
-    '🔥 మీ రాశి కామెంట్ చేయండి — ఫలం చెబుతాము!',
-    '🔮 ఉద్యోగం ఎప్పుడు? పెళ్లి ఎప్పుడు? ఇప్పుడే అడగండి!',
-    '✍️ మీ పేరు + 🙏 మీ సమస్య టైప్ చేయండి, లైవ్‌లో సమాధానం!',
-    '💰 వ్యాపారం, డబ్బు, ఆరోగ్యం — ఏదైనా అడగండి!',
-    '⏳ చివరి వరకు చూడండి — మీ పేరు కూడా రావచ్చు!',
-  ];
-  const hookEl = $('hook');
-  const chipEl = $('chip');
-  let hookIdx = 0;
-  hookEl.textContent = HOOKS[0];
-  setInterval(() => {
-    hookEl.classList.add('swap');
-    setTimeout(() => {
-      hookIdx = (hookIdx + 1) % HOOKS.length;
-      hookEl.textContent = HOOKS[hookIdx];
-      hookEl.classList.remove('swap');
-    }, 400);
-  }, HOOK_MS);
-
-  // ================= RASI INFO (rotating, for audience retention) =================
-  const RASIS = [
-    { s: '♈', n: 'మేషం',     l: 'కుజుడు',   d: 'మంగళవారం',  c: 'ఎరుపు',   t: 'ధైర్యం, నాయకత్వం మీ బలం. హనుమంతుని ఆరాధన శుభం.' },
-    { s: '♉', n: 'వృషభం',    l: 'శుక్రుడు',  d: 'శుక్రవారం',  c: 'తెలుపు',   t: 'స్థిరత్వం, కళాభిరుచి కలవారు. లక్ష్మీదేవి పూజ శుభం.' },
-    { s: '♊', n: 'మిథునం',   l: 'బుధుడు',   d: 'బుధవారం',   c: 'ఆకుపచ్చ',  t: 'తెలివి, మాటనైపుణ్యం ప్రత్యేకత. విష్ణు సహస్రనామ పఠనం మంచిది.' },
-    { s: '♋', n: 'కర్కాటకం', l: 'చంద్రుడు',  d: 'సోమవారం',   c: 'తెలుపు',   t: 'కరుణ, కుటుంబ ప్రేమ ఎక్కువ. శివారాధన శుభం.' },
-    { s: '♌', n: 'సింహం',    l: 'సూర్యుడు',  d: 'ఆదివారం',   c: 'కాషాయం',  t: 'ఆత్మవిశ్వాసం, గౌరవం మీ గుర్తింపు. సూర్య నమస్కారం మంచిది.' },
-    { s: '♍', n: 'కన్య',     l: 'బుధుడు',   d: 'బుధవారం',   c: 'ఆకుపచ్చ',  t: 'శ్రద్ధ, విశ్లేషణ మీ బలం. గణపతి పూజ శుభం.' },
-    { s: '♎', n: 'తుల',      l: 'శుక్రుడు',  d: 'శుక్రవారం',  c: 'తెలుపు',   t: 'సమతుల్యత, న్యాయబుద్ధి కలవారు. లక్ష్మీ ఆరాధన శుభం.' },
-    { s: '♏', n: 'వృశ్చికం', l: 'కుజుడు',   d: 'మంగళవారం',  c: 'ఎరుపు',   t: 'పట్టుదల, లోతైన ఆలోచన మీ లక్షణం. సుబ్రహ్మణ్య స్వామి ఆరాధన శుభం.' },
-    { s: '♐', n: 'ధనుస్సు',  l: 'గురుడు',   d: 'గురువారం',  c: 'పసుపు',   t: 'ఆశావాదం, జ్ఞానతృష్ణ ఎక్కువ. దక్షిణామూర్తి ఆరాధన శుభం.' },
-    { s: '♑', n: 'మకరం',     l: 'శని',      d: 'శనివారం',   c: 'నీలం',    t: 'కృషి, క్రమశిక్షణ మీ బలం. హనుమాన్ చాలీసా పఠనం శుభం.' },
-    { s: '♒', n: 'కుంభం',    l: 'శని',      d: 'శనివారం',   c: 'నీలం',    t: 'వినూత్న ఆలోచనలు, సేవాభావం కలవారు. శని ఆలయ దర్శనం శుభం.' },
-    { s: '♓', n: 'మీనం',     l: 'గురుడు',   d: 'గురువారం',  c: 'పసుపు',   t: 'దయ, ఆధ్యాత్మిక చింతన ఎక్కువ. విష్ణు ఆరాధన శుభం.' },
-  ];
-  const TXT = '\uFE0E';                                // force text (not emoji) glyph style
-  const rasiInner = $('rasiInner');
-  const strip = $('strip');
-  strip.innerHTML = RASIS.map((r) => `<span>${r.s}${TXT}</span>`).join('');
-  let rasiIdx = 0;
-
-  function paintRasi(i) {
-    const r = RASIS[i];
-    $('rSym').textContent = r.s + TXT;
-    $('rName').textContent = r.n;
-    $('rMeta').textContent = `అధిపతి: ${r.l} • శుభ వారం: ${r.d} • శుభ రంగు: ${r.c}`;
-    $('rTrait').textContent = r.t;
-    [...strip.children].forEach((el, k) => el.classList.toggle('on', k === i));
-  }
-  paintRasi(rasiIdx);
-  setInterval(() => {
-    rasiInner.classList.add('swap');
-    setTimeout(() => {
-      rasiIdx = (rasiIdx + 1) % RASIS.length;
-      paintRasi(rasiIdx);
-      rasiInner.classList.remove('swap');
-    }, 450);
-  }, RASI_MS);
-
   // ================= STATE =================
   const seen = new Set();
   const queue = [];
   const state = { apiKey: '', videoId: '', firstPoll: true, busy: false, polling: false, started: false, demo: false };
 
-  // ================= HELPERS =================
   function extractVideoId(input) {
     const s = String(input || '').trim();
     if (/^[\w-]{11}$/.test(s)) return s;
@@ -565,36 +434,7 @@
     return m ? m[1] : null;
   }
 
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-  function renderQueue() {
-    queueCount.textContent = String(queue.length);
-    queueList.innerHTML = queue
-      .slice(0, SHOW_UPCOMING)
-      .map((q) => `<li><b>👤 ${esc(q.author)}:</b> ${esc(q.message)}</li>`)
-      .join('');
-  }
-
-  function setWaves(mode) { waves.className = mode || ''; }
-  function setLiveMode(mode) { live.classList.toggle('answer', mode === 'answer'); }
-
-  function setAnswerText(text) {
-    const n = text.length;
-    predictionText.style.fontSize = (n <= 110 ? 38 : n <= 160 ? 34 : n <= 220 ? 30 : n <= 300 ? 27 : 24) + 'px';
-    predictionText.textContent = text;
-  }
-
-  function showViewer(item) {
-    viewerName.textContent = item.author === FALLBACK_NAME ? '🎙️ భక్తుల ప్రశ్న' : `🎙️ ${item.author} గారి ప్రశ్న`;
-    questionText.textContent = `“${item.message}”`;
-  }
-
-  function showIdle() {
-    setWaves('');
-    setLiveMode('rasi');
-  }
-
-  // ================= GEMINI =================
+  // ================= GEMINI (with model fallback) =================
   function buildPrompt(author, message) {
     const known = author !== FALLBACK_NAME;
     const greeting = known
@@ -623,38 +463,67 @@ Rules:
       .slice(0, 600);
   }
 
-  async function askGemini(author, message) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': state.apiKey },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: buildPrompt(author, message) }] }],
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 1024,
-          thinkingConfig: { thinkingBudget: 0 },
-        },
-      }),
-    });
-    if (!resp.ok) {
-      const t = await resp.text().catch(() => '');
-      throw new Error(`Gemini ${resp.status}: ${t.slice(0, 200)}`);
+  // Returns raw text. Throws an Error with .fatal = true only when the key itself is rejected.
+  async function callGemini(key, prompt, maxTokens) {
+    let lastErr = null;
+    for (const model of MODELS) {
+      try {
+        const gen = { temperature: 0.8, maxOutputTokens: maxTokens };
+        if (model.startsWith('gemini-2.5')) gen.thinkingConfig = { thinkingBudget: 0 };
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: gen }),
+        });
+        if (!resp.ok) {
+          const t = await resp.text().catch(() => '');
+          const err = new Error(`${model} → HTTP ${resp.status} ${t.replace(/\s+/g, ' ').slice(0, 140)}`);
+          if (resp.status === 401 || resp.status === 403 || /API key|API_KEY/i.test(t)) { err.fatal = true; throw err; }
+          lastErr = err;                       // 404 / 429 / 5xx / other 400 → try the next model
+          continue;
+        }
+        const data = await resp.json();
+        const text = (data?.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
+        if (!text.trim()) {
+          lastErr = new Error(`${model} → empty reply (${data?.candidates?.[0]?.finishReason || data?.promptFeedback?.blockReason || 'unknown'})`);
+          continue;
+        }
+        return text;
+      } catch (e) {
+        if (e.fatal) throw e;
+        lastErr = e;                           // network / CORS error → try the next model
+      }
     }
-    const data = await resp.json();
-    const raw = (data?.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
+    throw lastErr || new Error('Gemini unavailable');
+  }
+
+  async function askGemini(author, message) {
+    const raw = await callGemini(state.apiKey, buildPrompt(author, message), 1024);
     const cleaned = cleanTelugu(raw);
-    if (!cleaned) throw new Error('Gemini returned empty/non-Telugu text');
+    if (!cleaned) throw new Error('Gemini reply had no Telugu text');
     // Safety net: if the name was lost, never let a bare "గారు" be spoken
     if (/^\s*గారు/.test(cleaned)) return cleaned.replace(/^\s*గారు[,\s]*/, 'భక్తులారా, ');
     if (author !== FALLBACK_NAME && !cleaned.includes('గారు')) return 'నమస్కారం. ' + cleaned;
     return cleaned;
   }
 
+  // Built-in answers: used only if Gemini cannot answer, so the stream never goes silent
+  const FALLBACK_ANSWERS = [
+    'గ్రహ బలం మీకు అనుకూలంగా ఉంది, ఓపికతో ముందుకు సాగితే శుభ ఫలితాలు లభిస్తాయి. ప్రతి రోజు ఇష్ట దైవాన్ని స్మరించండి.',
+    'మీ సమస్యలు త్వరలోనే తొలగిపోతాయి, గురు బలం మీకు తోడుగా ఉంది. గురువారం గణపతి పూజ చేయడం శుభం.',
+    'కష్టపడి పనిచేస్తే మంచి అవకాశాలు వస్తాయి, ఆందోళన వద్దు. శివారాధన, హనుమాన్ చాలీసా పఠనం మంచి ఫలితాలు ఇస్తాయి.',
+  ];
+  let fbIdx = 0;
+  function fallbackAnswer(author) {
+    const body = FALLBACK_ANSWERS[fbIdx++ % FALLBACK_ANSWERS.length];
+    const teluguName = author !== FALLBACK_NAME && !/[A-Za-z0-9]/.test(author);
+    return (teluguName ? `${author} గారు, నమస్కారం. ` : 'భక్తులారా, నమస్కారం. ') + body;
+  }
+
   // ================= TTS + AUDIO/VIDEO SYNC =================
   async function speak(text) {
     const resp = await fetch('/api/tts?text=' + encodeURIComponent(text));
-    if (!resp.ok) throw new Error('TTS failed: ' + resp.status);
+    if (!resp.ok) throw new Error('Voice (/api/tts) failed: HTTP ' + resp.status);
     const blob = await resp.blob();
     const objUrl = URL.createObjectURL(blob);
 
@@ -667,7 +536,6 @@ Rules:
         if (done) return;
         done = true;
         setTalking(false);
-        setWaves('');
         URL.revokeObjectURL(objUrl);
         resolve();
       };
@@ -675,36 +543,37 @@ Rules:
         if (done) return;
         done = true;
         setTalking(false);
-        setWaves('');
         URL.revokeObjectURL(objUrl);
         reject(e);
       };
-      audio.addEventListener('playing', () => { setTalking(true); setWaves('speaking'); });
+      audio.addEventListener('playing', () => setTalking(true));
       audio.addEventListener('ended', finish);
-      audio.addEventListener('error', finish);
+      audio.addEventListener('error', () => fail(new Error('Audio could not be played')));
       const p = audio.play();
-      if (p && p.catch) p.catch((e) => { console.error('Audio play blocked:', e); fail(e); });
+      if (p && p.catch) p.catch((e) => fail(new Error('Browser blocked audio: ' + (e.message || e))));
     });
   }
 
   // Demo fallback when no voice is available: same talking animation, silent
   async function fakeSpeak(text) {
     setTalking(true);
-    setWaves('speaking');
     await sleep(Math.min(16000, 2500 + text.length * 70));
     setTalking(false);
-    setWaves('');
   }
 
   // ================= QUEUE (strictly one by one) =================
   async function handleItem(item) {
-    setLiveMode('answer');
-    showViewer(item);
-    setWaves('thinking');
-    setAnswerText('🪔 గ్రహ స్థితులు పరిశీలిస్తున్నాను...');
-    setStatus(item.demo ? 'Demo…' : 'Asking Gemini…');
-    const answer = item.demoAnswer || await askGemini(item.author, item.message);
-    setAnswerText(answer);
+    let answer = item.demoAnswer;
+    if (!answer) {
+      setStatus('Asking Gemini…');
+      try {
+        answer = await askGemini(item.author, item.message);
+      } catch (e) {
+        console.error('Gemini failed, using built-in answer:', e);
+        setStatus('Error: Gemini failed (' + (e.message || e) + ') – used a built-in answer');
+        answer = fallbackAnswer(item.author);
+      }
+    }
     setStatus('Speaking…');
     try {
       await speak(answer);
@@ -720,22 +589,18 @@ Rules:
     try {
       while (queue.length) {
         const item = queue.shift();
-        renderQueue();
         try {
           await handleItem(item);
         } catch (err) {
           console.error('Item failed:', err);
           setTalking(false);
-          setWaves('');
           setStatus('Error: ' + (err.message || err));
         }
         await sleep(COOLDOWN_MS);
       }
     } finally {
       state.busy = false;
-      showIdle();
-      renderQueue();
-      setStatus(state.demo ? 'Demo running' : 'Waiting for chat…');
+      if (!/^Error/.test(statusLine.textContent)) setStatus(state.demo ? 'Demo running' : 'Waiting for chat…');
     }
   }
 
@@ -762,11 +627,10 @@ Rules:
           message: String(m.message).slice(0, 200),
         });
       }
-      renderQueue();
       processQueue();
     } catch (err) {
       console.error('Poll failed:', err);
-      setStatus('Chat error: ' + (err.message || err));
+      setStatus('Error: chat not readable – ' + (err.message || err));
     }
   }
 
@@ -778,6 +642,57 @@ Rules:
       await sleep(POLL_MS);
     }
     state.polling = false;
+  }
+
+  // ================= PRE-FLIGHT CHECKS (shown in the panel) =================
+  function showChecks(lines) {
+    $('checks').innerHTML = lines.map((l) => `<div class="${l.cls}">${esc(l.text)}</div>`).join('');
+  }
+
+  async function runChecks(key, vid) {
+    const lines = [];
+    let blocking = false;
+
+    // 1) Gemini
+    try {
+      await callGemini(key, 'Reply with one short Telugu greeting only.', 64);
+      lines.push({ cls: 'ok', text: '✅ Gemini key works' });
+    } catch (e) {
+      if (e.fatal) {
+        blocking = true;
+        lines.push({ cls: 'bad', text: '❌ Gemini rejected the key: ' + e.message });
+      } else {
+        lines.push({ cls: 'warn', text: '⚠️ Gemini is busy/unreachable right now: ' + e.message + ' — built-in answers will be used if it keeps failing.' });
+      }
+    }
+
+    // 2) Voice
+    try {
+      const r = await fetch('/api/tts?text=' + encodeURIComponent('నమస్కారం'));
+      if (!r.ok) {
+        const body = (await r.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 160);
+        throw new Error(`HTTP ${r.status} ${body}`);
+      }
+      const b = await r.blob();
+      if (b.size < 500) throw new Error('empty audio');
+      lines.push({ cls: 'ok', text: '✅ Telugu voice works' });
+    } catch (e) {
+      blocking = true;
+      lines.push({ cls: 'bad', text: '❌ Voice (/api/tts) not working: ' + (e.message || e) + ' — open the site from your Vercel URL and check the function logs.' });
+    }
+
+    // 3) Live chat
+    if (vid) {
+      try {
+        const r = await fetch('/api/chat?videoId=' + encodeURIComponent(vid), { cache: 'no-store' });
+        const d = await r.json();
+        if (!Array.isArray(d)) throw new Error(d?.error || 'bad response');
+        lines.push({ cls: 'ok', text: `✅ Live chat readable (${d.length} recent messages)` });
+      } catch (e) {
+        lines.push({ cls: 'warn', text: '⚠️ Live chat not readable yet: ' + (e.message || e) + ' — check the video is live with chat on.' });
+      }
+    }
+    return { lines, blocking };
   }
 
   // ================= DEMO MODE (no API key / URL needed) =================
@@ -797,7 +712,6 @@ Rules:
   function pushDemo() {
     const d = DEMO[demoI++ % DEMO.length];
     queue.push({ id: 'demo' + demoI, author: d.n, message: d.q, demo: true, demoAnswer: d.a });
-    renderQueue();
     processQueue();
   }
 
@@ -807,7 +721,6 @@ Rules:
     if (state.demo) {
       state.demo = false;
       queue.length = 0;
-      renderQueue();
       chipEl.textContent = '🔴 లైవ్ • ఉచిత జ్యోతిష్య సలహా';
     }
   }
@@ -829,13 +742,40 @@ Rules:
   // ================= START / MODAL =================
   function setModal(show) { modal.classList.toggle('hidden', !show); }
 
-  function start() {
+  let startAnyway = false;
+  function resetStartAnyway() { startAnyway = false; $('startBtn').textContent = 'Start Astrologer'; }
+  $('apiKey').addEventListener('input', resetStartAnyway);
+  $('ytUrl').addEventListener('input', resetStartAnyway);
+
+  function readInputs() {
     const key = $('apiKey').value.trim();
     const vid = extractVideoId($('ytUrl').value);
     const err = $('modalErr');
     err.textContent = '';
-    if (!key) { err.textContent = 'Please enter your Gemini API key (or press Try Demo).'; return; }
-    if (!vid) { err.textContent = 'Please enter a valid YouTube Live URL or Video ID.'; return; }
+    if (!key) { err.textContent = 'Please enter your Gemini API key (or press Try Demo).'; return null; }
+    if (!vid) { err.textContent = 'Please enter a valid YouTube Live URL or Video ID.'; return null; }
+    return { key, vid };
+  }
+
+  async function start() {
+    const inp = readInputs();
+    if (!inp) return;
+    const { key, vid } = inp;
+
+    if (!startAnyway) {
+      const btn = $('startBtn');
+      btn.disabled = true;
+      showChecks([{ cls: 'warn', text: '⏳ Checking Gemini, voice and live chat…' }]);
+      const { lines, blocking } = await runChecks(key, vid);
+      showChecks(lines);
+      btn.disabled = false;
+      if (blocking) {
+        startAnyway = true;
+        btn.textContent = 'Start anyway';
+        $('modalErr').textContent = 'Fix the red items above, or press Start anyway.';
+        return;
+      }
+    }
 
     try {
       localStorage.setItem(LS_KEY, key);
@@ -849,7 +789,7 @@ Rules:
     state.started = true;
     seen.clear();
     queue.length = 0;
-    renderQueue();
+    $('lastErr').textContent = '';
 
     setModal(false);
     silenceVideos();
@@ -858,8 +798,22 @@ Rules:
     pollLoop();
   }
 
+  async function testOnly() {
+    const key = $('apiKey').value.trim();
+    const vid = extractVideoId($('ytUrl').value);
+    $('modalErr').textContent = '';
+    if (!key) { $('modalErr').textContent = 'Enter your Gemini API key first.'; return; }
+    const btn = $('testBtn');
+    btn.disabled = true;
+    showChecks([{ cls: 'warn', text: '⏳ Checking…' }]);
+    const { lines } = await runChecks(key, vid);
+    showChecks(lines);
+    btn.disabled = false;
+  }
+
   $('startBtn').addEventListener('click', start);
   $('demoBtn').addEventListener('click', startDemo);
+  $('testBtn').addEventListener('click', testOnly);
   document.addEventListener('keydown', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
     if (e.key === 'c' || e.key === 'C') setModal(modal.classList.contains('hidden'));
@@ -872,9 +826,9 @@ Rules:
     $('ytUrl').value = localStorage.getItem(LS_URL) || '';
   } catch {}
 
-  // Optional: /?autostart=1 begins immediately when saved values exist; /?demo=1 starts the demo
+  // Optional: /?demo=1 starts the demo; /?autostart=1 starts with saved values (skips the checks)
   if (params.get('demo')) startDemo();
-  else if (params.get('autostart') && $('apiKey').value && $('ytUrl').value) start();
+  else if (params.get('autostart') && $('apiKey').value && $('ytUrl').value) { startAnyway = true; start(); }
 })();
 </script>
 </body>
